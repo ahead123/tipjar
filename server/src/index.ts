@@ -48,9 +48,9 @@ app.get('/users', authenticateToken, async (req: Request, res: Response) => {
 });
 
 // Protected route
-app.get('/profile', authenticateToken, (req, res) => {
+app.get('/profile', authenticateToken, async (req: Request, res: Response) => {
     res.json({ userId: req.userId, message: 'Protected route accessed!' });
- });
+});
 
 app.listen(port, () => {
     console.log(`[server]: Server is running on http://localhost:${port}`);
