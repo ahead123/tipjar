@@ -18,6 +18,37 @@ app.get('/', async (req: Request, res: Response) => {
     res.send('Express + TypeScript Server 🚀');
 });
 
+app.post('/register', async (req: Request, res: Response) => {
+    const { username, password, first_name, last_name, email, role } = req.body;
+
+    if (!username || !password || !first_name || !last_name || !email || !role) {
+        return res.status(400).json({ message: 'All fields are required' })
+    };
+
+    const existingUser = await prisma.users.findUnique({
+        where: {
+            username
+        }
+    });
+
+    if (existingUser) {
+        return res.status(409).json({ message: 'User already exists' });
+    };
+
+    const user = await prisma.users.create({
+        data: {
+            username,
+            password,
+            first_name,
+            last_name,
+            email,
+            role
+        }
+    });
+
+    res.json({ user, message: 'User created!' });
+});
+
 
 app.post('/login', async (req: Request, res: Response) => {
     console.log(req.body);
