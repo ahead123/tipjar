@@ -19,7 +19,7 @@ app.get('/', async (req: Request, res: Response) => {
 });
 
 
-app.post('/auth', async (req: Request, res: Response) => {
+app.post('/login', async (req: Request, res: Response) => {
     console.log(req.body);
     const { username, password } = req.body;
     const user = await prisma.users.findUnique({
