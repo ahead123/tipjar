@@ -41,6 +41,17 @@ app.post('/login', async (req: Request, res: Response) => {
     res.json({ token });
 });
 
+// Protected route
+app.get('/users', authenticateToken, async (req: Request, res: Response) => {
+    const users = await prisma.users.findMany();
+    res.json({ users, message: 'Protected route accessed!' });
+});
+
+// Protected route
+app.get('/profile', authenticateToken, (req, res) => {
+    res.json({ userId: req.userId, message: 'Protected route accessed!' });
+ });
+
 app.listen(port, () => {
     console.log(`[server]: Server is running on http://localhost:${port}`);
 });
