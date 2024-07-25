@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express';
 const router: Router = Router();
 import { PrismaClient } from '@prisma/client';
-import { generateToken, authenticateToken } from '../auth';
+import { generateToken, authenticateToken, hashPassword, comparePassword } from '../auth';
 
 const prisma = new PrismaClient();
 
@@ -22,10 +22,12 @@ router.post('/register', async (req: Request, res: Response) => {
         return res.status(409).json({ message: 'User already exists' });
     };
 
+    const hashedPassword: any = await hashPassword(password);
+
     const user = await prisma.users.create({
         data: {
             username,
-            password,
+            password: hashedPassword,
             first_name,
             last_name,
             email,
@@ -40,6 +42,27 @@ router.post('/register', async (req: Request, res: Response) => {
 router.post('/login', async (req: Request, res: Response) => {
     console.log(req.body);
     const { username, password } = req.body;
+
+    if (!username || !password) {
+        return res.status(400).json({ message: 'All fields are required' });
+    };
+
+   const lookupUserHashedPassword = await prisma.users.findUnique({
+         where: {
+              username
+         }
+    });
+
+    if (!lookupUserHashedPassword) {
+        return res.status(404).json({ message: 'User not found' });
+    };
+
+    await comparePassword(password, lookupUserHashedPassword.password);
+
+    if(!comparePassword) {
+        return res.status(401).json({ message: 'Invalid credentials' });
+    }
+
     const user = await prisma.users.findUnique({
         where: {
             username,
@@ -48,12 +71,8 @@ router.post('/login', async (req: Request, res: Response) => {
     });
 
     if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-    }
-
-    if (user.password !== password) {
-        return res.status(403).json({ message: 'Invalid password' });
-    }
+        return res.status(401).json({ message: 'Invalid credentials' });
+    };
 
     const token = generateToken(user.email);
     res.json({ token });
