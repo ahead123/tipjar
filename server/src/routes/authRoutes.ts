@@ -22,7 +22,7 @@ router.post('/register', async (req: Request, res: Response) => {
         return res.status(409).json({ message: 'User already exists' });
     };
 
-    const hashedPassword: any = await hashPassword(password);
+    let hashedPassword: any = await hashPassword(password);
 
     const user = await prisma.users.create({
         data: {

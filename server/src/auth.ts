@@ -38,7 +38,7 @@ export const hashPassword = async (password: string) => {
       if (err) {
         throw err;
       }
-      return hash.toString();
+      return hash;
     });
   });
 };
