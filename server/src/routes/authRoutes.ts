@@ -47,33 +47,22 @@ router.post('/login', async (req: Request, res: Response) => {
         return res.status(400).json({ message: 'All fields are required' });
     };
 
-   const lookupUserHashedPassword = await prisma.users.findUnique({
+   const user = await prisma.users.findUnique({
          where: {
               username
          }
     });
 
-    if (!lookupUserHashedPassword) {
+    if (!user) {
         return res.status(404).json({ message: 'User not found' });
     };
 
-    await comparePassword(password, lookupUserHashedPassword.password);
+    await comparePassword(password, user.password);
 
     if(!comparePassword) {
         return res.status(401).json({ message: 'Invalid credentials' });
     }
-
-    const user = await prisma.users.findUnique({
-        where: {
-            username,
-            password
-        }
-    });
-
-    if (!user) {
-        return res.status(401).json({ message: 'Invalid credentials' });
-    };
-
+    
     const token = generateToken(user.email);
     res.json({ token });
 });
