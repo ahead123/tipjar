@@ -26,7 +26,7 @@ router.get('/all', authenticateToken, async (req: Request, res: Response) => {
         res.json({ users, message: 'Protected route accessed!' });
     } catch (error) {
         console.log('error fetching users',error);
-        res.json({ message: 'Error fetching users' });
+        res.json({ message: 'Error fetching users', error });
     }
 });
 
