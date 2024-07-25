@@ -30,29 +30,10 @@ export const authenticateToken = (req: Request, res: Response, next: any) => {
 
 // Function to hash password
 export const hashPassword = async (password: string) => {
-  bcrypt.genSalt(saltRounds, (err, salt) => {
-    if (err) {
-      throw err;
-    }
-    bcrypt.hash(password, salt, (err, hash) => {
-      if (err) {
-        throw err;
-      }
-      return hash;
-    });
-  });
+  return bcrypt.hash(password, saltRounds);
 };
 
 // Function to compare password
 export const comparePassword = async (password: string, hash: string) => {
-  bcrypt.compare(password, hash, (err, result) => {
-    if (err) {
-      throw err;
-    }
-    if (result === true) {
-      return true;
-    }else {
-      return false;
-    }
-  });
+  return bcrypt.compare(password, hash);
 }
