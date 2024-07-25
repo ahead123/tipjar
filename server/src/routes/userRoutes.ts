@@ -5,7 +5,7 @@ import { authenticateToken } from '../auth';
 
 const prisma = new PrismaClient();
 
-router.get('/users/user/:id', authenticateToken, async (req: Request, res: Response) => {
+router.get('/:id', authenticateToken, async (req: Request, res: Response) => {
     const { id } = req.params;
     const user = await prisma.users.findUnique({
         where: {
@@ -15,12 +15,12 @@ router.get('/users/user/:id', authenticateToken, async (req: Request, res: Respo
     res.json({ user, message: 'Protected route accessed!' });
 });
 
-router.get('/users/all', authenticateToken, async (req: Request, res: Response) => {
+router.get('/all', authenticateToken, async (req: Request, res: Response) => {
     const users = await prisma.users.findMany();
     res.json({ users, message: 'Protected route accessed!' });
 });
 
-router.get('/users/profile/:id', authenticateToken, async (req: Request, res: Response) => {
+router.get('/profile/:id', authenticateToken, async (req: Request, res: Response) => {
     const { id } = req.params;
     const user = await prisma.users.findUnique({
         where: {

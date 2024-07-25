@@ -5,7 +5,7 @@ import { generateToken, authenticateToken } from '../auth';
 
 const prisma = new PrismaClient();
 
-router.post('/auth/register', async (req: Request, res: Response) => {
+router.post('/register', async (req: Request, res: Response) => {
     const { username, password, first_name, last_name, email, role } = req.body;
 
     if (!username || !password || !first_name || !last_name || !email || !role) {
@@ -37,7 +37,7 @@ router.post('/auth/register', async (req: Request, res: Response) => {
 });
 
 
-router.post('/auth/login', async (req: Request, res: Response) => {
+router.post('/login', async (req: Request, res: Response) => {
     console.log(req.body);
     const { username, password } = req.body;
     const user = await prisma.users.findUnique({
